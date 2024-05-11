@@ -20,7 +20,7 @@ from langchain_community.vectorstores.faiss import FAISS
 
 load_dotenv()
 req_input = os.getenv("REQ_IN")
-os.environ["OPENAI_API_KEY"] = req_input
+os.environ["OPENAI_API_KEY"] = st.secrets["REQ_IN"]
 
 
 llm = ChatOpenAI()
