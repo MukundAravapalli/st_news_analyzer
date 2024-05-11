@@ -1,0 +1,11 @@
+pip install langchain
+pip install -U unstructured
+pip install certifi
+/Applications/Python\ 3.11/Install\ Certificates.command
+/Applications/Python\ 3.yourPythonVersionHere for the above command/Install\ Certificates.command
+pip install faiss-cpu
+pip install sentence-transformers
+pip install streamlit
+pip install langchain-community
+pip install langchain-openai
+pip install pipreqs

@@ -1,0 +1,137 @@
+from langchain_community.document_loaders.text import TextLoader
+from langchain_community.document_loaders import UnstructuredURLLoader
+import nltk
+nltk.download('punkt')
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+import pandas as pd
+from sentence_transformers import SentenceTransformer
+import faiss
+import os
+from dotenv import load_dotenv
+import streamlit as st
+import pickle
+import time
+from langchain_openai import ChatOpenAI
+from langchain.chains.qa_with_sources.retrieval import RetrievalQAWithSourcesChain
+from langchain.chains.qa_with_sources.loading import load_qa_with_sources_chain 
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores.faiss import FAISS
+
+load_dotenv()
+req_input = os.getenv("REQ_IN")
+os.environ["OPENAI_API_KEY"] = req_input
+
+
+llm = ChatOpenAI()
+
+
+loader = UnstructuredURLLoader(urls = [
+    "https://www.cnbc.com/2024/05/09/mcdonalds-makes-changes-to-increase-mobile-sales.html",
+    "https://www.cnbc.com/2024/05/07/why-the-30-year-fixed-rate-mortgage-is-a-uniquely-american-construct.html"
+])
+
+data = loader.load()
+data_text = data[0].page_content
+
+text_splitter = RecursiveCharacterTextSplitter(
+    separators= ["\n\n", "\n", "."],
+    chunk_size = 1000,
+    chunk_overlap = 200
+)
+
+docs = text_splitter.split_documents(data)
+
+embeddings = OpenAIEmbeddings()
+vectorindex_openai = FAISS.from_documents(docs, embeddings)
+
+
+# storing results of the vector index 
+file_path = "vector_index.pkl"
+with open(file_path, "wb") as f:
+    pickle.dump(vectorindex_openai.serialize_to_bytes(), f)
+
+#opening the file
+if os.path.exists(file_path):
+    with open(file_path, "rb") as f:
+        uploaded_pickle = pickle.load(f)
+        vectorIndex = vectorindex_openai.deserialize_from_bytes(serialized=uploaded_pickle, embeddings=embeddings)
+
+# print("vectorIndex")
+# print(f"{vectorIndex}")
+
+chain = RetrievalQAWithSourcesChain.from_llm(llm=llm, retriever=vectorIndex.as_retriever())
+# print(f"\n\n{chain}")
+
+# query = "How much every US restaurant see its cash flow increase by starting in 2025"
+# answer = chain.invoke({'question': query}, return_only_outputs = True)
+# print(f"AI response: {answer}\n\n")
+
+st.title("News Research Tool 🔍")
+st.sidebar.title("News Article URLs 📰")
+number_of_articles = 3
+
+urls = []
+
+for i in range(number_of_articles):
+    url = st.sidebar.text_input(f"URL {i+1}")
+    urls.append(url)
+
+process_url_clicked = st.sidebar.button("Process URLs")
+
+main_placeholder = st.empty()
+
+if process_url_clicked:
+    # load the data
+    main_placeholder.text("Loading the data... 🗃️")
+    loader = UnstructuredURLLoader(urls=urls)
+    data = loader.load()
+
+    #split the data
+    main_placeholder.text("Splitting the data... 📕📗📘📙")
+    text_splitter = RecursiveCharacterTextSplitter(
+        separators= ["\n\n", "\n", "."],
+        chunk_size = 1000,
+        chunk_overlap = 200
+    )
+
+    docs = text_splitter.split_documents(data)
+
+    #Create embeddings and save it to FAISS index
+    embeddings = OpenAIEmbeddings()
+    vectorindex_openai = FAISS.from_documents(docs, embeddings)
+    main_placeholder.text("Embedding the data... 📊")
+    time.sleep(2)
+
+    #Save the FAISS index to a pickle file
+
+    # storing results of the vector index 
+    file_path = "vector_index.pkl"
+    with open(file_path, "wb") as f:
+        pickle.dump(vectorindex_openai.serialize_to_bytes(), f)
+
+
+
+query = main_placeholder.text_input("Question: ")
+if query:
+    if os.path.exists(file_path):
+        with open(file_path, "rb") as f:
+            uploaded_pickle = pickle.load(f)
+            vectorIndex = vectorindex_openai.deserialize_from_bytes(serialized=uploaded_pickle, embeddings=embeddings)
+            chain = RetrievalQAWithSourcesChain.from_llm(llm=llm, retriever=vectorIndex.as_retriever())
+            result = chain.invoke({'question': query}, return_only_outputs = True)
+            st.header("Answer")
+            st.write(result["answer"])
+
+            #Display sources if available
+            sources = result.get("sources", "")
+            if sources:
+                st.subheader("Sources: ")
+                sources_list = sources.split("\n")
+                for source in sources_list:
+                    st.write(source)
+
+
+
+# Use the following line in terminal to run streamlit
+# streamlit run main.py

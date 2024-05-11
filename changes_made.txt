@@ -1,0 +1,22 @@
+# storing results of the vector index 
+file_path = "vector_index.pkl"
+with open(file_path, "wb") as f:
+    pickle.dump(vectorindex_openai.serialize_to_bytes(), f)
+
+#opening the file
+if os.path.exists(file_path):
+    with open(file_path, "rb") as f:
+        uploaded_pickle = pickle.load(f)
+        vectorIndex = vectorindex_openai.deserialize_from_bytes(serialized=uploaded_pickle, embeddings=embeddings)
+
+Instead of 
+
+# storing results of the vector index 
+file_path = "vector_index.pkl"
+with open(file_path, "wb") as f:
+    pickle.dump(vectorindex_openai, f)
+
+#opening the file
+if os.path.exists(file_path):
+    with open(file_path, "rb") as f:
+        vectorIndex = pickle.load(f)
