@@ -25,8 +25,8 @@ os.environ["OPENAI_API_KEY"] = req_input
 
 llm = ChatOpenAI()
 file_path = ""
-st.title("News Research Tool 🔍")
-st.write("News Articles or Online Documents behind a Paywall cannot be processed")
+st.title("News Analyzer Tool 🔍")
+st.write("*News Articles or Online Documents behind a Paywall cannot be processed*")
 st.sidebar.title("News Article URLs 📰")
 number_of_articles = 5
 
