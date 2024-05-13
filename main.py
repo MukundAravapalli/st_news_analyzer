@@ -102,7 +102,8 @@ if query:
                 for source in sources_list:
                     st.write(source)
     
-
+    else:
+        st.write("path did not exist")
 
 # Use the following line in terminal to run streamlit
 # streamlit run main.py
