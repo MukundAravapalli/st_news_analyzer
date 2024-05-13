@@ -53,7 +53,7 @@ In order to feed only the relevant chunks of our data to the OpenAI API, we will
 
 
 ## Examples
-Let us look at some examples of successful Sign Ups. 
+More examples of use cases will be added later on. 
 
 ***
 
