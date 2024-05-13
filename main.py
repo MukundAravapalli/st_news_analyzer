@@ -27,8 +27,8 @@ llm = ChatOpenAI()
 file_path = ""
 st.title("News Analyzer Tool 🔍")
 st.write("*News Articles or Online Documents behind a Paywall cannot be processed*")
-st.sidebar.title("News Article URLs 📰")
 st.sidebar.write("Examples and Documentation for this Application can be found [here](https://github.com/MukundAravapalli/st_news_analyzer/blob/main/README.md).")
+st.sidebar.title("News Article URLs 📰")
 number_of_articles = 5
 
 urls = []
