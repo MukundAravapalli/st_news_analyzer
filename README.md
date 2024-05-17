@@ -55,7 +55,7 @@ In order to feed only the relevant chunks of our data to the OpenAI API, we will
 ## Examples
 Here are some creative examples of how you can use this Application:
 
-#### Wikipidea Articles
+#### Wikipedia Articles
 ![Advanced Settings](/images/PhilHartmanWiki.png)
 ![Advanced Settings](/images/Phil_HartmanEx.png)
 
