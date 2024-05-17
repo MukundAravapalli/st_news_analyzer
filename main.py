@@ -75,7 +75,7 @@ if process_url_clicked:
     embeddings = OpenAIEmbeddings()
     vectorindex_openai = FAISS.from_documents(docs, embeddings)
     main_placeholder.text("Embedding the data... 📊")
-    time.sleep(2)
+    # time.sleep(2)
 
     #Save the FAISS index to a pickle file
 
