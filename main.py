@@ -34,6 +34,10 @@ number_of_articles = 5
 
 urls = []
 
+for i in range(number_of_articles):
+    url = st.sidebar.text_input(f"URL {i+1}")
+    urls.append(url)
+
 process_url_clicked = st.sidebar.button("Process URLs")
 
 mukund_link = "https://www.mukund-aravapalli.com/"
@@ -46,10 +50,6 @@ main_placeholder = st.empty()
 answer_status = st.empty()
 
 if process_url_clicked:
-
-    for i in range(number_of_articles):
-        url = st.sidebar.text_input(f"URL {i+1}")
-        urls.append(url)
 
     # load the data
     main_placeholder.text("Loading the data... 🗃️")
@@ -70,7 +70,7 @@ if process_url_clicked:
     embeddings = OpenAIEmbeddings()
     vectorindex_openai = FAISS.from_documents(docs, embeddings)
     main_placeholder.text("Embedding the data... 📊")
-    time.sleep(2)
+    # time.sleep(2)
 
     #Save the FAISS index to a pickle file
 
