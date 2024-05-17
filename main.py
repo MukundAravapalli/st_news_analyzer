@@ -26,10 +26,7 @@ os.environ["OPENAI_API_KEY"] = req_input
 llm = ChatOpenAI()
 
 
-loader = UnstructuredURLLoader(urls = [
-    "https://www.cnbc.com/2024/05/09/mcdonalds-makes-changes-to-increase-mobile-sales.html",
-    "https://www.cnbc.com/2024/05/07/why-the-30-year-fixed-rate-mortgage-is-a-uniquely-american-construct.html"
-])
+loader = UnstructuredURLLoader(urls = [])
 
 data = loader.load()
 data_text = data[0].page_content
