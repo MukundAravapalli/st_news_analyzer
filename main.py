@@ -25,6 +25,45 @@ os.environ["OPENAI_API_KEY"] = req_input
 
 llm = ChatOpenAI()
 
+
+loader = UnstructuredURLLoader(urls = ["https://www.cnbc.com/2024/05/10/mcdonalds-working-on-5-value-meal.html"])
+
+data = loader.load()
+data_text = data[0].page_content
+
+text_splitter = RecursiveCharacterTextSplitter(
+    separators= ["\n\n", "\n", "."],
+    chunk_size = 1000,
+    chunk_overlap = 200
+)
+
+docs = text_splitter.split_documents(data)
+
+embeddings = OpenAIEmbeddings()
+vectorindex_openai = FAISS.from_documents(docs, embeddings)
+
+
+# storing results of the vector index 
+file_path = "vector_index.pkl"
+with open(file_path, "wb") as f:
+    pickle.dump(vectorindex_openai.serialize_to_bytes(), f)
+
+#opening the file
+if os.path.exists(file_path):
+    with open(file_path, "rb") as f:
+        uploaded_pickle = pickle.load(f)
+        vectorIndex = vectorindex_openai.deserialize_from_bytes(serialized=uploaded_pickle, embeddings=embeddings)
+
+# print("vectorIndex")
+# print(f"{vectorIndex}")
+
+chain = RetrievalQAWithSourcesChain.from_llm(llm=llm, retriever=vectorIndex.as_retriever())
+# print(f"\n\n{chain}")
+
+# query = "How much every US restaurant see its cash flow increase by starting in 2025"
+# answer = chain.invoke({'question': query}, return_only_outputs = True)
+# print(f"AI response: {answer}\n\n")
+
 st.title("News Research Tool 🔍")
 st.write("*News Articles or Online Documents behind a Paywall cannot be processed*")
 st.sidebar.write("Examples and Documentation for this Application can be found [here](https://github.com/MukundAravapalli/st_news_analyzer/blob/main/README.md).")
@@ -50,7 +89,6 @@ main_placeholder = st.empty()
 answer_status = st.empty()
 
 if process_url_clicked:
-
     # load the data
     main_placeholder.text("Loading the data... 🗃️")
     loader = UnstructuredURLLoader(urls=urls)
@@ -70,7 +108,7 @@ if process_url_clicked:
     embeddings = OpenAIEmbeddings()
     vectorindex_openai = FAISS.from_documents(docs, embeddings)
     main_placeholder.text("Embedding the data... 📊")
-    # time.sleep(2)
+    time.sleep(2)
 
     #Save the FAISS index to a pickle file
 
