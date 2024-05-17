@@ -68,8 +68,11 @@ chain = RetrievalQAWithSourcesChain.from_llm(llm=llm, retriever=vectorIndex.as_r
 # print(f"AI response: {answer}\n\n")
 
 st.title("News Research Tool 🔍")
+st.write("*News Articles or Online Documents behind a Paywall cannot be processed*")
+st.sidebar.write("Examples and Documentation for this Application can be found [here](https://github.com/MukundAravapalli/st_news_analyzer/blob/main/README.md).")
 st.sidebar.title("News Article URLs 📰")
-number_of_articles = 3
+
+number_of_articles = 5
 
 urls = []
 
@@ -79,7 +82,14 @@ for i in range(number_of_articles):
 
 process_url_clicked = st.sidebar.button("Process URLs")
 
+mukund_link = "https://www.mukund-aravapalli.com/"
+tutorial_link = "https://www.youtube.com/watch?v=MoqgmWV1fm8"
+dhaval_link = "https://www.linkedin.com/in/dhavalsays"
+
+st.sidebar.markdown(f"This version of the News Analyzer Tool was built by [Mukund Aravapalli]({mukund_link}), but the original application was built by [Dhaval Patel]({dhaval_link}) and is called the News Research Tool. The link for the tutorial can be found [here]({tutorial_link})")
+
 main_placeholder = st.empty()
+answer_status = st.empty()
 
 if process_url_clicked:
     # load the data
@@ -110,6 +120,8 @@ if process_url_clicked:
     with open(file_path, "wb") as f:
         pickle.dump(vectorindex_openai.serialize_to_bytes(), f)
 
+    answer_status.write("Loading answer, this can take a few seconds...")
+
 
 
 query = main_placeholder.text_input("Question: ")
@@ -122,6 +134,7 @@ if query:
             result = chain.invoke({'question': query}, return_only_outputs = True)
             st.header("Answer")
             st.write(result["answer"])
+            answer_status.write("")
 
             #Display sources if available
             sources = result.get("sources", "")
