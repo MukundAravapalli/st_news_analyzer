@@ -86,6 +86,7 @@ st.sidebar.markdown(f"This version of the News Analyzer Tool was built by [Mukun
 
 main_placeholder = st.empty()
 process_url_clicked = st.button("Enter")
+st.caption("Make sure to click Enter to process your answer")
 answer_status = st.empty()
 
 if process_url_clicked:
