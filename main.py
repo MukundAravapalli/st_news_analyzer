@@ -77,7 +77,6 @@ for i in range(number_of_articles):
     url = st.sidebar.text_input(f"URL {i+1}")
     urls.append(url)
 
-process_url_clicked = st.sidebar.button("Process URLs")
 
 mukund_link = "https://www.mukund-aravapalli.com/"
 tutorial_link = "https://www.youtube.com/watch?v=MoqgmWV1fm8"
@@ -86,6 +85,7 @@ dhaval_link = "https://www.linkedin.com/in/dhavalsays"
 st.sidebar.markdown(f"This version of the News Analyzer Tool was built by [Mukund Aravapalli]({mukund_link}), but the original application was built by [Dhaval Patel]({dhaval_link}) and is called the News Research Tool. The link for the tutorial can be found [here]({tutorial_link})")
 
 main_placeholder = st.empty()
+process_url_clicked = st.button("Enter")
 answer_status = st.empty()
 
 if process_url_clicked:
@@ -117,7 +117,7 @@ if process_url_clicked:
     with open(file_path, "wb") as f:
         pickle.dump(vectorindex_openai.serialize_to_bytes(), f)
 
-    answer_status.write("Answering your questions can take a few seconds.")
+    answer_status.write("Loading answer, this can take a few seconds...")
 
 
 
